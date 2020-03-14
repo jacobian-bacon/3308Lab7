@@ -122,6 +122,36 @@ app.get('/player_info', function(req, res) {
 });
 
 
+app.get('/player_info/post', function(req, res) {
+  var player_ided = req.query.player_choice;
+  console.log(player_ided);
+  var query0 = "SELECT id, name FROM football_players";
+  var player_info_selection = "SELECT * FROM football_players WHERE name = '" + player_ided +"'";
+	db.task('get-everything', task => {
+        return task.batch([
+            task.any(query0),
+            task.any(player_info_selection)
+        ]);
+    })
+    .then(info => {
+      console.log(info[0]);
+    	res.render('pages/player_info',{
+				my_title: "Home Page",
+				data: info
+			})
+    })
+    .catch(err => {
+        // display error message in case an error
+            console.log('error', err);
+            response.render('pages/home', {
+                title: 'Home Page',
+                data: ''
+            })
+    });
+
+});
+
+
 app.get('/team_stats', function(req, res) {
   var query0 = "DROP TABLE IF EXISTS football_games_webready2";
 	var query1 = "SELECT *, (CASE WHEN home_score > f.visitor_score THEN 'CU BUFFS'::varchar(30) ELSE f.visitor_name END) as winner INTO football_games_webready2 FROM football_games f WHERE f.game_date BETWEEN '2018-08-01' AND '2019-12-31'";
