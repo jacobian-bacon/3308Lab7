@@ -27,7 +27,7 @@ const dbConfig = {
 	port: 5432,
 	database: 'football_db',
 	user: 'postgres',
-	password: 'pwd'
+	password: 'Bacon'
 };
 
 var db = pgp(dbConfig);
@@ -49,7 +49,7 @@ app.use(express.static(__dirname + '/'));//This line is necessary for us to use 
   Login Page:        Provided For your (can ignore this page)
   Registration Page: Provided For your (can ignore this page)
   Home Page:
-  		/home - get request (no parameters) 
+  		/home - get request (no parameters)
   				This route will make a single query to the favorite_colors table to retrieve all of the rows of colors
   				This data will be passed to the home view (pages/home)
 
@@ -72,23 +72,23 @@ app.use(express.static(__dirname + '/'));//This line is necessary for us to use 
   				2. Count the number of winning games in the Fall 2018 Season
   				3. Count the number of lossing games in the Fall 2018 Season
   			The three query results will then be passed onto the team_stats view (pages/team_stats).
-  			The team_stats view will display all fo the football games for the season, show who won each game, 
+  			The team_stats view will display all fo the football games for the season, show who won each game,
   			and show the total number of wins/losses for the season.
 
   		/player_info - get request (no parameters)
   			This route will handle a single query to the football_players table which will retrieve the id & name for all of the football players.
-  			Next it will pass this result to the player_info view (pages/player_info), which will use the ids & names to populate the select tag for a form 
+  			Next it will pass this result to the player_info view (pages/player_info), which will use the ids & names to populate the select tag for a form
 ************************************/
 
-// login page 
+// login page
 app.get('/', function(req, res) {
 	res.render('pages/login',{
-		local_css:"signin.css", 
+		local_css:"signin.css",
 		my_title:"Login Page"
 	});
 });
 
-// registration page 
+// registration page
 app.get('/register', function(req, res) {
 	res.render('pages/register',{
 		my_title:"Registration Page"
@@ -97,6 +97,112 @@ app.get('/register', function(req, res) {
 
 /*Add your other get/post request handlers below here: */
 
+app.get('/team_stats', function(req, res) {
+	var query1 = "SELECT *, (CASE WHEN home_score > f.visitor_score THEN 'CU BUFFS'::varchar(30) ELSE f.visitor_name END) as winner INTO football_games_webready2 FROM football_games f WHERE f.game_date BETWEEN '2018-08-01' AND '2019-12-31'";
+  var query = "SELECT * FROM football_games_webready2 WHERE game_date BETWEEN '2018-08-01' AND '2019-12-31'";
+  db.any(query1).then(function () {}).catch(function (err) {
+        console.log('error', err);
+      });
+  db.any(query)
+	.then(function (rows) {
+	res.render('pages/team_stats',{
+		my_title: 'Team Stats',
+		data: rows
+	});
+	}).catch(function (err) {
+console.log('error', err);
+        })
+
+});
+
+app.get('/home', function(req, res) {
+	var query = 'select * from favorite_colors;';
+	db.any(query)
+        .then(function (rows) {
+            res.render('pages/home',{
+				my_title: "Home Page",
+				data: rows,
+				color: '',
+				color_msg: ''
+			})
+
+        })
+        .catch(function (err) {
+            // display error message in case an error
+            console.log('error', err);
+            response.render('pages/home', {
+                title: 'Home Page',
+                data: '',
+                color: '',
+                color_msg: ''
+            })
+        })
+});
+
+app.get('/home/pick_color', function(req, res) {
+	var color_choice = req.query.color_selection;
+	var color_options =  'select * from favorite_colors;';
+	var color_message = "select color_msg from favorite_colors where hex_value = '" + color_choice + "';";
+	db.task('get-everything', task => {
+        return task.batch([
+            task.any(color_options),
+            task.any(color_message)
+        ]);
+    })
+    .then(info => {
+    	res.render('pages/home',{
+				my_title: "Home Page",
+				data: info[0],
+				color: color_choice,
+				color_msg: info[1][0].color_msg
+			})
+    })
+    .catch(err => {
+        // display error message in case an error
+            console.log('error', err);
+            response.render('pages/home', {
+                title: 'Home Page',
+                data: '',
+                color: '',
+                color_msg: ''
+            })
+    });
+
+});
+
+app.post('/home/pick_color', function(req, res) {
+	var color_hex = req.body.color_hex;
+	var color_name = req.body.color_name;
+	var color_message = req.body.color_message;
+	var insert_statement = "INSERT INTO favorite_colors(hex_value, name, color_msg) VALUES('" + color_hex + "','" +
+							color_name + "','" + color_message +"') ON CONFLICT DO NOTHING;";
+
+	var color_select = 'select * from favorite_colors;';
+	db.task('get-everything', task => {
+        return task.batch([
+            task.any(insert_statement),
+            task.any(color_select)
+        ]);
+    })
+    .then(info => {
+    	res.render('pages/home',{
+				my_title: "Home Page",
+				data: info[1],
+				color: color_hex,
+				color_msg: color_message
+			})
+    })
+    .catch(err => {
+        // display error message in case an error
+            console.log('error', err);
+            response.render('pages/home', {
+                title: 'Home Page',
+                data: '',
+                color: '',
+                color_msg: ''
+            })
+    });
+});
 
 app.listen(3000);
 console.log('3000 is the magic port');
