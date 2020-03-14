@@ -98,20 +98,59 @@ app.get('/register', function(req, res) {
 /*Add your other get/post request handlers below here: */
 
 app.get('/team_stats', function(req, res) {
+  var query0 = "DROP TABLE IF EXISTS football_games_webready2";
 	var query1 = "SELECT *, (CASE WHEN home_score > f.visitor_score THEN 'CU BUFFS'::varchar(30) ELSE f.visitor_name END) as winner INTO football_games_webready2 FROM football_games f WHERE f.game_date BETWEEN '2018-08-01' AND '2019-12-31'";
   var query = "SELECT * FROM football_games_webready2 WHERE game_date BETWEEN '2018-08-01' AND '2019-12-31'";
-  db.any(query1).then(function () {}).catch(function (err) {
-        console.log('error', err);
-      });
-  db.any(query)
-	.then(function (rows) {
-	res.render('pages/team_stats',{
-		my_title: 'Team Stats',
-		data: rows
-	});
-	}).catch(function (err) {
-console.log('error', err);
-        })
+  var query2 = "SELECT Distinct (SELECT count(home_score) FROM football_games WHERE home_score > visitor_score) as count1, (SELECT count(home_score) FROM football_games WHERE home_score < visitor_score) as count2 from football_games;";
+  var query3 = "SELECT count(home_score) FROM football_games WHERE home_score < visitor_score";
+  var query4 = "DROP TABLE football_games_webready2";
+  // db.any(query1).then(function () {}).catch(function (err) {
+  //       console.log('error', err);
+  //     });
+//   db.any(query)
+// 	.then(function (rows) {
+// 	res.render('pages/team_stats',{
+// 		my_title: 'Team Stats',
+// 		data: rows
+// 	});
+// 	}).catch(function (err) {
+// console.log('error', err);
+//         })
+//   db.any(query2)
+// 	.then(function (rows) {
+//     console.log(rows);
+// 	app.render('pages/team_stats',{
+// 		my_title: 'Team Stats',
+// 		data: rows
+// 	});
+// 	}).catch(function (err) {
+// console.log('error', err);
+//         })
+        db.task('get-everything', task => {
+              return task.batch([
+                  task.any(query0),
+                  task.any(query1),
+                  task.any(query),
+                  task.any(query2),
+                  task.any(query3),
+                  task.any(query4)
+              ]);
+          })
+          .then(info => {
+            console.log(info[0]);
+          	res.render('pages/team_stats',{
+      				my_title: "Team Stats",
+      				data: info,
+      			})
+          })
+          .catch(err => {
+              // display error message in case an error
+                  console.log('error', err);
+                  response.render('pages/team_stats', {
+                      title: 'Home Page',
+                      data: '',
+                  })
+          });
 
 });
 
