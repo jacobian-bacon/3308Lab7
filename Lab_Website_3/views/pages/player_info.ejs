@@ -38,28 +38,100 @@
 							<!-- TODO: Set Player Information
 							 			If a player has been selected, fill in their information in each of the fields below.
 							 		    You'll need to calculate here the player's average rushing, receiving, and passing yards.-->
+											<%
+											if (data) {
+												var deets = '';
+												data[1].forEach(function(item){
+													deets += item.name;
+												}); %>
+											<%- deets %>
+											<% } %>
+
 							<th>Year</th>
-							<td>	</td>
+							<td><%
+							if (data) {
+								var deets = '';
+								data[1].forEach(function(item){
+									deets += item.year;
+								}); %>
+							<%- deets %>
+							<% } %>	</td>
 						</tr>
 						<tr>
 							<th>Major</th>
-							<td>	</td>
+							<td>	<%
+							if (data) {
+								var deets = '';
+								data[1].forEach(function(item){
+									deets += item.major;
+								}); %>
+							<%- deets %>
+							<% } %></td>
 						</tr>
 						<tr>
 							<th>Games Played</th>
-							<td>	</td>
+							<td> <%
+							if (data) {
+								var deets = '';
+								data[2].forEach(function(item){
+									deets += item.count;
+								}); %>
+							<%- deets %>
+							<% } %>	</td>
 						</tr>
 						<tr>
-							<td>Passing Yards: </td>
-							<td>Avg. Passing Yards: </td>
+							<td>Passing Yards:											<%
+																		if (data) {
+																			var deets = '';
+																			data[1].forEach(function(item){
+																				deets += item.passing_yards;
+																			}); %>
+																		<%- deets %>
+																		<% } %> </td>
+							<td>Avg. Passing Yards: <%
+																		if (data) {
+																			var deets = '';
+																			data[4].forEach(function(item){
+																				deets += item.pssngyrds;
+																			}); %>
+																		<%- deets %>
+																		<% } %></td>
 						</tr>
 						<tr>
-							<td>Rushing Yards: </td>
-							<td>Avg. Rushing Yards: </td>
+							<td>Rushing Yards:									<%
+																		if (data) {
+																			var deets = '';
+																			data[1].forEach(function(item){
+																				deets += item.rushing_yards;
+																			}); %>
+																		<%- deets %>
+																		<% } %></td>
+							<td>Avg. Rushing Yards: <%
+																		if (data) {
+																			var deets = '';
+																			data[3].forEach(function(item){
+																				deets += item.ryrds;
+																			}); %>
+																		<%- deets %>
+																		<% } %></td>
 						</tr>
 						<tr>
-							<td>Receiving Yards: </td>
-							<td>Avg. Receiving Yards: </td>
+							<td>Receiving Yards: 											<%
+																		if (data) {
+																			var deets = '';
+																			data[1].forEach(function(item){
+																				deets += item.receiving_yards;
+																			}); %>
+																		<%- deets %>
+																		<% } %></td>
+							<td>Avg. Receiving Yards: <%
+																		if (data) {
+																			var deets = '';
+																			data[5].forEach(function(item){
+																				deets += item.rcvngyrds;
+																			}); %>
+																		<%- deets %>
+																		<% } %></td>
 						</tr>
 					</table>
 				</div>

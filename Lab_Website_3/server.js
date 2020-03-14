@@ -127,10 +127,18 @@ app.get('/player_info/post', function(req, res) {
   console.log(player_ided);
   var query0 = "SELECT id, name FROM football_players";
   var player_info_selection = "SELECT * FROM football_players WHERE name = '" + player_ided +"'";
+  var games_played_by = "SELECT COUNT(*) FROM football_games WHERE football_games.players && (SELECT array_agg(id) FROM football_players WHERE name = '" +player_ided +"')";
+  var avg_rssing_yrds = "SELECT CAST((SELECT rushing_yards AS plyrs_yards FROM football_players WHERE name = '" + player_ided + "') as DECIMAL) / (SELECT COUNT(*) FROM football_games WHERE football_games.players && (SELECT array_agg(id) FROM football_players WHERE name = '" + player_ided + "')) as ryrds";
+  var avg_pssing_yrds = "SELECT CAST((SELECT passing_yards AS plyrs_yards FROM football_players WHERE name = '" + player_ided + "') as DECIMAL) / (SELECT COUNT(*) FROM football_games WHERE football_games.players && (SELECT array_agg(id) FROM football_players WHERE name = '" + player_ided + "')) as pssngyrds";
+  var avg_rcving_yrds = "SELECT CAST((SELECT receiving_yards AS plyrs_yards FROM football_players WHERE name = '" + player_ided + "') as DECIMAL) / (SELECT COUNT(*) FROM football_games WHERE football_games.players && (SELECT array_agg(id) FROM football_players WHERE name = '" + player_ided + "')) as rcvngyrds";
 	db.task('get-everything', task => {
         return task.batch([
             task.any(query0),
-            task.any(player_info_selection)
+            task.any(player_info_selection),
+            task.any(games_played_by),
+            task.any(avg_rssing_yrds),
+            task.any(avg_pssing_yrds),
+            task.any(avg_rcving_yrds)
         ]);
     })
     .then(info => {
