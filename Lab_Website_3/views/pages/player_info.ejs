@@ -39,7 +39,7 @@
 							 			If a player has been selected, fill in their information in each of the fields below.
 							 		    You'll need to calculate here the player's average rushing, receiving, and passing yards.-->
 											<%
-											if (data) {
+											if (data[1]) {
 												var deets = '';
 												data[1].forEach(function(item){
 													deets += item.name;
@@ -49,7 +49,7 @@
 
 							<th>Year</th>
 							<td><%
-							if (data) {
+							if (data[1]) {
 								var deets = '';
 								data[1].forEach(function(item){
 									deets += item.year;
@@ -60,7 +60,7 @@
 						<tr>
 							<th>Major</th>
 							<td>	<%
-							if (data) {
+							if (data[1]) {
 								var deets = '';
 								data[1].forEach(function(item){
 									deets += item.major;
@@ -71,7 +71,7 @@
 						<tr>
 							<th>Games Played</th>
 							<td> <%
-							if (data) {
+							if (data[1]) {
 								var deets = '';
 								data[2].forEach(function(item){
 									deets += item.count;
@@ -81,7 +81,7 @@
 						</tr>
 						<tr>
 							<td>Passing Yards:											<%
-																		if (data) {
+																		if (data[1]) {
 																			var deets = '';
 																			data[1].forEach(function(item){
 																				deets += item.passing_yards;
@@ -89,7 +89,7 @@
 																		<%- deets %>
 																		<% } %> </td>
 							<td>Avg. Passing Yards: <%
-																		if (data) {
+																		if (data[1]) {
 																			var deets = '';
 																			data[4].forEach(function(item){
 																				deets += item.pssngyrds;
@@ -99,7 +99,7 @@
 						</tr>
 						<tr>
 							<td>Rushing Yards:									<%
-																		if (data) {
+																		if (data[1]) {
 																			var deets = '';
 																			data[1].forEach(function(item){
 																				deets += item.rushing_yards;
@@ -107,7 +107,7 @@
 																		<%- deets %>
 																		<% } %></td>
 							<td>Avg. Rushing Yards: <%
-																		if (data) {
+																		if (data[1]) {
 																			var deets = '';
 																			data[3].forEach(function(item){
 																				deets += item.ryrds;
@@ -117,7 +117,7 @@
 						</tr>
 						<tr>
 							<td>Receiving Yards: 											<%
-																		if (data) {
+																		if (data[1]) {
 																			var deets = '';
 																			data[1].forEach(function(item){
 																				deets += item.receiving_yards;
@@ -125,7 +125,7 @@
 																		<%- deets %>
 																		<% } %></td>
 							<td>Avg. Receiving Yards: <%
-																		if (data) {
+																		if (data[1]) {
 																			var deets = '';
 																			data[5].forEach(function(item){
 																				deets += item.rcvngyrds;
